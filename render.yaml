@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: the-sovelle-spin
+    runtime: node
+    plan: free
+    region: oregon
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_VERSION
+        value: 22.12.0
+      - key: NODE_ENV
+        value: production
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: ADMIN_USERNAME
+        value: sovelle-admin
+      - key: ADMIN_PASSWORD
+        value: Sovelle@2026
+      - key: ADMIN_FULL_NAME
+        value: SOVELLE Atelier Admin
+      - key: DB_PATH
+        value: ./data/sovelle.db
