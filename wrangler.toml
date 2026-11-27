@@ -9,7 +9,7 @@ compatibility_date = "2024-09-23"
 [[d1_databases]]
 binding = "DB"
 database_name = "sovelle-spin-db"
-database_id = "placeholder-replace-with-your-d1-id"
+database_id = "fc49fd0b-35db-42a6-b356-f2a4fec91258"
 
 # Environment Variables
 [vars]
