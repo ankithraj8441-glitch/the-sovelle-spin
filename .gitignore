@@ -1,10 +1,23 @@
+# Dependencies
 node_modules/
+
+# Build output
 dist/
+
+# Local database
 data/
 *.db
 *.db-shm
 *.db-wal
+.wrangler/
+
+# Environment
 .env
+.env.local
+
+# OS
 .DS_Store
-firebase-debug.log
-*.log
+Thumbs.db
+
+# Vercel (legacy, no longer used)
+.vercel/

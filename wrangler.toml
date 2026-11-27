@@ -1,0 +1,19 @@
+name = "the-sovelle-spin"
+pages_build_output_dir = "dist"
+compatibility_date = "2024-09-23"
+
+# Cloudflare D1 Database Binding
+# After creating your D1 database with:
+#   npx wrangler d1 create sovelle-spin-db
+# Paste your generated database_id below:
+[[d1_databases]]
+binding = "DB"
+database_name = "sovelle-spin-db"
+database_id = "placeholder-replace-with-your-d1-id"
+
+# Environment Variables
+[vars]
+SESSION_SECRET = "9f4a8c2e7b1d6034a5e9c8f2b147d30a6e8c5b2f1940d7a3c6e8b4f2a1d90537"
+ADMIN_USERNAME = "sovelle-admin"
+ADMIN_PASSWORD = "Sovelle@2026"
+ADMIN_FULL_NAME = "SOVELLE Atelier Admin"

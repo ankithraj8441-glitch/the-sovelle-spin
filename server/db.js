@@ -4,8 +4,7 @@ import crypto from 'node:crypto';
 import { DatabaseSync } from 'node:sqlite';
 import { hashPassword } from './auth.js';
 
-const defaultDbPath = process.env.VERCEL ? '/tmp/sovelle.db' : './data/sovelle.db';
-const dbPath = path.resolve(process.cwd(), process.env.DB_PATH || defaultDbPath);
+const dbPath = path.resolve(process.cwd(), process.env.DB_PATH || './data/sovelle.db');
 fs.mkdirSync(path.dirname(dbPath), { recursive: true });
 
 export const db = new DatabaseSync(dbPath);
