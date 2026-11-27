@@ -17,8 +17,8 @@ function fromHex(hex) {
   return bytes;
 }
 
-function base64urlEncode(str) {
-  const bytes = new TextEncoder().encode(str);
+function bufferToBase64Url(buffer) {
+  const bytes = new Uint8Array(buffer);
   let binary = '';
   for (let i = 0; i < bytes.length; i++) {
     binary += String.fromCharCode(bytes[i]);
@@ -29,7 +29,7 @@ function base64urlEncode(str) {
     .replace(/=+$/, '');
 }
 
-function base64urlDecode(str) {
+function base64UrlToBuffer(str) {
   let base64 = str.replace(/-/g, '+').replace(/_/g, '/');
   while (base64.length % 4) {
     base64 += '=';
@@ -39,7 +39,15 @@ function base64urlDecode(str) {
   for (let i = 0; i < binary.length; i++) {
     bytes[i] = binary.charCodeAt(i);
   }
-  return new TextDecoder().decode(bytes);
+  return bytes;
+}
+
+function textToBase64Url(str) {
+  return bufferToBase64Url(new TextEncoder().encode(str));
+}
+
+function base64UrlToText(str) {
+  return new TextDecoder().decode(base64UrlToBuffer(str));
 }
 
 /**
@@ -116,7 +124,7 @@ export async function signToken(payload, secret = DEFAULT_SECRET, ttlSeconds = 6
     ...payload,
     exp: Math.floor(Date.now() / 1000) + ttlSeconds,
   };
-  const encodedPayload = base64urlEncode(JSON.stringify(data));
+  const encodedPayload = textToBase64Url(JSON.stringify(data));
   const enc = new TextEncoder();
 
   const key = await crypto.subtle.importKey(
@@ -128,9 +136,7 @@ export async function signToken(payload, secret = DEFAULT_SECRET, ttlSeconds = 6
   );
 
   const signature = await crypto.subtle.sign('HMAC', key, enc.encode(encodedPayload));
-  const encodedSig = base64urlEncode(
-    String.fromCharCode(...new Uint8Array(signature))
-  );
+  const encodedSig = bufferToBase64Url(signature);
 
   return `${encodedPayload}.${encodedSig}`;
 }
@@ -153,14 +159,7 @@ export async function verifyToken(token, secret = DEFAULT_SECRET) {
       ['verify']
     );
 
-    // Decode base64url signature back to bytes
-    let sigBase64 = encodedSig.replace(/-/g, '+').replace(/_/g, '/');
-    while (sigBase64.length % 4) sigBase64 += '=';
-    const sigBinary = atob(sigBase64);
-    const sigBytes = new Uint8Array(sigBinary.length);
-    for (let i = 0; i < sigBinary.length; i++) {
-      sigBytes[i] = sigBinary.charCodeAt(i);
-    }
+    const sigBytes = base64UrlToBuffer(encodedSig);
 
     const valid = await crypto.subtle.verify(
       'HMAC',
@@ -171,7 +170,7 @@ export async function verifyToken(token, secret = DEFAULT_SECRET) {
 
     if (!valid) return null;
 
-    const parsed = JSON.parse(base64urlDecode(encodedPayload));
+    const parsed = JSON.parse(base64UrlToText(encodedPayload));
     if (!parsed.exp || parsed.exp < Math.floor(Date.now() / 1000)) {
       return null;
     }

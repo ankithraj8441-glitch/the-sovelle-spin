@@ -145,7 +145,10 @@ function generateCouponString() {
   return `SOV-${p1}-${p2}`;
 }
 
+let schemaInitialized = false;
+
 async function ensureSchema(db, env) {
+  if (schemaInitialized) return;
   await db.exec(`
     CREATE TABLE IF NOT EXISTS admin_accounts (
       id TEXT PRIMARY KEY,
@@ -274,6 +277,8 @@ async function ensureSchema(db, env) {
       .bind(crypto.randomUUID(), adminUser, passHash, adminFullName, now)
       .run();
   }
+
+  schemaInitialized = true;
 }
 
 async function getCustomerState(db, customerId) {
